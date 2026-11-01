@@ -1,0 +1,8 @@
+{
+  "uuid": "camera-webcam@priitmat.github.io",
+  "name": "Camera Webcam",
+  "description": "Use a DSLR or mirrorless camera as a webcam over USB (gphoto2). Shows streaming status in the top bar with start, stop and restart controls.\n\nRequires the one-time system setup from the project page.",
+  "url": "https://github.com/priitmat/camera-webcam",
+  "shell-version": ["51"],
+  "version-name": "1.0"
+}

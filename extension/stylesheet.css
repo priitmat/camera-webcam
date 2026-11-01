@@ -1,0 +1,11 @@
+.camera-webcam-active {
+    color: #57e389;
+}
+
+.camera-webcam-busy {
+    color: #f6d32d;
+}
+
+.camera-webcam-idle {
+    opacity: 0.45;
+}

@@ -1,0 +1,16 @@
+[Unit]
+Description=Camera as webcam (gphoto2 live view to v4l2loopback)
+Documentation=https://github.com/priitmat/camera-webcam
+# Stops automatically when the camera is switched off or unplugged
+BindsTo=dev-camerawebcam.device
+After=dev-camerawebcam.device systemd-modules-load.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/camera-webcam
+ExecStartPre=/sbin/modprobe v4l2loopback
+ExecStart=/usr/local/bin/camera-webcam
+Restart=on-failure
+RestartSec=3

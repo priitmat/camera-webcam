@@ -1,0 +1,11 @@
+# Camera Webcam settings. Restart the webcam after changing:
+#   sudo systemctl restart camera-webcam
+
+# Virtual webcam device (must match video_nr in /etc/modprobe.d/camera-webcam.conf)
+VIDEO_DEVICE=/dev/video10
+
+# Optional ffmpeg video filter, for example:
+#   hflip        mirror the image
+#   vflip        flip upside down
+#   scale=1280:-2  upscale (adds no detail, only for apps that insist on 720p)
+VIDEO_FILTER=

@@ -1,0 +1,14 @@
+#!/bin/bash
+# Streams the camera's USB live view into the v4l2loopback virtual webcam.
+# Started by camera-webcam.service. Settings: /etc/default/camera-webcam
+set -o pipefail
+
+VIDEO_DEVICE="${VIDEO_DEVICE:-/dev/video10}"
+VIDEO_FILTER="${VIDEO_FILTER:-}"
+
+sleep 2   # give the camera a moment after power-on
+
+gphoto2 --stdout --capture-movie \
+  | ffmpeg -hide_banner -loglevel error -i - \
+      ${VIDEO_FILTER:+-vf "$VIDEO_FILTER"} \
+      -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 "$VIDEO_DEVICE"
