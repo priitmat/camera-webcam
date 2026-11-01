@@ -69,7 +69,7 @@ class CameraWebcamIndicator extends PanelMenu.Button {
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.menu.addAction('Show logs', () => this._showLogs());
 
-        this.menu.connect('open-state-changed', (_menu, open) => {
+        this._menuOpenId = this.menu.connect('open-state-changed', (_menu, open) => {
             if (open)
                 this._refresh();
         });
@@ -224,6 +224,10 @@ class CameraWebcamIndicator extends PanelMenu.Button {
 
     destroy() {
         this._destroyed = true;
+        if (this._menuOpenId) {
+            this.menu.disconnect(this._menuOpenId);
+            this._menuOpenId = null;
+        }
         this._cancellable.cancel();
         for (const id of this._subscriptions)
             Gio.DBus.system.signal_unsubscribe(id);
