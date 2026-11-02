@@ -66,8 +66,6 @@ class CameraWebcamIndicator extends PanelMenu.Button {
             () => this._unitAction('StopUnit'));
         this._restartItem = this.menu.addAction('Restart webcam',
             () => this._unitAction('RestartUnit'));
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        this.menu.addAction('Show logs', () => this._showLogs());
 
         this._menuOpenId = this.menu.connect('open-state-changed', (_menu, open) => {
             if (open)
@@ -97,8 +95,6 @@ class CameraWebcamIndicator extends PanelMenu.Button {
             const reply = await systemdCall(SYSTEMD_PATH, MANAGER_IFACE,
                 'LoadUnit', new GLib.Variant('(s)', [unit]), '(o)',
                 this._cancellable);
-            if (this._destroyed)
-                return;
 
             const [path] = reply.deepUnpack();
             this._unitPaths.set(unit, path);
@@ -136,7 +132,7 @@ class CameraWebcamIndicator extends PanelMenu.Button {
     }
 
     async _refresh() {
-        if (this._destroyed || this._unitPaths.size < 2)
+        if (this._unitPaths.size < 2)
             return;
         if (this._refreshing) {
             this._refreshPending = true;
@@ -147,14 +143,13 @@ class CameraWebcamIndicator extends PanelMenu.Button {
         try {
             const service = await this._activeState(SERVICE);
             const camera = await this._activeState(DEVICE) === 'active';
-            if (!this._destroyed)
-                this._render(service, camera);
+            this._render(service, camera);
         } catch (e) {
             if (!isCancelled(e))
                 console.error(`Camera Webcam: ${e.message}`);
         } finally {
             this._refreshing = false;
-            if (this._refreshPending && !this._destroyed) {
+            if (this._refreshPending) {
                 this._refreshPending = false;
                 this._refresh();
             }
@@ -206,24 +201,7 @@ class CameraWebcamIndicator extends PanelMenu.Button {
         }
     }
 
-    _showLogs() {
-        const cmd = ['journalctl', '-fu', SERVICE];
-        for (const term of ['ptyxis', 'gnome-terminal', 'kgx']) {
-            if (!GLib.find_program_in_path(term))
-                continue;
-            try {
-                Gio.Subprocess.new([term, '--', ...cmd], Gio.SubprocessFlags.NONE);
-            } catch (e) {
-                console.error(`Camera Webcam: ${e.message}`);
-            }
-            return;
-        }
-        Main.notifyError('Camera Webcam',
-            `No supported terminal found. Run: ${cmd.join(' ')}`);
-    }
-
     destroy() {
-        this._destroyed = true;
         if (this._menuOpenId) {
             this.menu.disconnect(this._menuOpenId);
             this._menuOpenId = null;

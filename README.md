@@ -4,7 +4,7 @@ Use a DSLR or mirrorless camera as a webcam on Linux over a single USB cable, wi
 
 - Switch the camera on and it appears as **Camera Webcam** in Meet, Zoom, Teams, OBS and browsers.
 - Switch it off and the webcam goes away. No terminal needed.
-- The top bar icon shows the status and has Start / Stop / Restart / Show logs.
+- The top bar icon shows the status and has Start / Stop / Restart. Logs: `journalctl -fu camera-webcam`.
 
 It streams the camera's USB live view with [gphoto2](http://www.gphoto.org/) into a [v4l2loopback](https://github.com/umlaeute/v4l2loopback) virtual webcam. A udev rule starts a systemd service whenever a supported camera is connected.
 
